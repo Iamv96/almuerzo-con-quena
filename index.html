@@ -102,19 +102,12 @@
   <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16 flex-1 space-y-6">
 
     <!-- KPI CARDS GRID -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      <!-- Total Compra -->
+    <div class="grid grid-cols-2 gap-3 sm:gap-4">
+      <!-- Total Boleta -->
       <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col justify-between">
         <p class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">Total Boleta</p>
         <p class="text-xl sm:text-3xl font-extrabold text-slate-900 mt-1" id="kpi-total-gastado">$59.230</p>
         <span class="text-[11px] text-slate-500 mt-1">10 productos (Jumbo Quilpué)</span>
-      </div>
-
-      <!-- Cuota por Porción -->
-      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col justify-between">
-        <p class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">Cuota por Porción</p>
-        <p class="text-xl sm:text-3xl font-extrabold text-orange-600 mt-1" id="kpi-cuota-porcion">$5.385</p>
-        <span class="text-[11px] text-slate-500 mt-1">Dividido en 11 porciones</span>
       </div>
 
       <!-- Estado Recaudación -->
@@ -129,13 +122,6 @@
         <div class="w-full bg-emerald-200 rounded-full h-2 overflow-hidden mt-2">
           <div class="bg-emerald-600 h-2 rounded-full transition-all duration-500" id="progress-cobrado" style="width: 0%"></div>
         </div>
-      </div>
-
-      <!-- Saldo por recaudar -->
-      <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-4 shadow-sm border border-amber-200 flex flex-col justify-between">
-        <p class="text-[11px] font-bold tracking-wider text-amber-800 uppercase">Por Recaudar</p>
-        <p class="text-xl sm:text-3xl font-extrabold text-amber-900 mt-1" id="kpi-por-recaudar">$53.847</p>
-        <span class="text-[11px] text-amber-700 mt-1">A favor de Ignacio</span>
       </div>
     </div>
 
@@ -620,8 +606,6 @@
       
       const pct = calc.totalToCollect > 0 ? Math.min(100, (calc.totalCollected / calc.totalToCollect) * 100) : 0;
       document.getElementById('progress-cobrado').style.width = `${pct}%`;
-
-      document.getElementById('kpi-por-recaudar').textContent = clp.format(calc.remainingToCollect);
 
       // Actualizar select filter
       const optAll = document.querySelector('#card-filter-select option[value="all"]');
