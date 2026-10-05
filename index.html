@@ -83,13 +83,9 @@
           </div>
         </div>
         
-        <!-- Header Actions: Datos Bancarios + Ver Boleta -->
-        <div class="w-full sm:w-auto flex items-center gap-2">
-          <button onclick="openReceiptModal('comprobantes/boleta_jumbo_almuerzo.jpg', 'Boleta Electrónica Jumbo Quilpué ($59.230)', 'Cencosud Retail S.A. - Av. Ramón Freire 2414')" class="flex-1 sm:flex-initial px-4 py-2.5 bg-white/15 hover:bg-white/25 active:scale-95 transition-all text-white text-xs sm:text-sm font-bold rounded-xl border border-white/30 gap-2 backdrop-blur-md shadow-sm flex items-center justify-center">
-            <svg class="w-4 h-4 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-            <span>Ver Boleta</span>
-          </button>
-          <button onclick="openBankModal()" class="flex-1 sm:flex-initial px-4 py-2.5 bg-white text-orange-700 hover:bg-orange-50 active:scale-95 transition-all text-xs sm:text-sm font-bold rounded-xl border border-white/40 gap-2 shadow-md flex items-center justify-center">
+        <!-- Header Action: Datos Bancarios -->
+        <div class="w-full sm:w-auto flex items-center">
+          <button onclick="openBankModal()" class="w-full sm:w-auto px-4 py-2.5 bg-white text-orange-700 hover:bg-orange-50 active:scale-95 transition-all text-xs sm:text-sm font-bold rounded-xl border border-white/40 gap-2 shadow-md flex items-center justify-center">
             <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
             <span>Datos Bancarios</span>
           </button>
@@ -103,11 +99,10 @@
 
     <!-- KPI CARDS GRID -->
     <div class="grid grid-cols-2 gap-3 sm:gap-4">
-      <!-- Total Boleta -->
+      <!-- Total a Recaudar -->
       <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col justify-between">
-        <p class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">Total Boleta</p>
+        <p class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">Total a Recaudar</p>
         <p class="text-xl sm:text-3xl font-extrabold text-slate-900 mt-1" id="kpi-total-gastado">$59.230</p>
-        <span class="text-[11px] text-slate-500 mt-1">10 productos (Jumbo Quilpué)</span>
       </div>
 
       <!-- Estado Recaudación -->
@@ -134,7 +129,7 @@
 
       <button onclick="switchTab('tab-receipts')" id="btn-tab-receipts" class="tab-btn flex-1 py-2.5 px-4 sm:px-5 rounded-xl font-semibold text-sm whitespace-nowrap transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-        <span>Boleta & Desglose</span>
+        <span>Boleta y desglose</span>
       </button>
     </div>
 
@@ -143,25 +138,9 @@
     <!-- ========================================================================= -->
     <section id="tab-cards" class="space-y-4">
       
-      <!-- Filters and search bar -->
-      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <!-- Dropdown Filter -->
-        <div class="flex items-center gap-2.5">
-          <label for="card-filter-select" class="text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Filtrar:</label>
-          <div class="relative min-w-[180px]">
-            <select id="card-filter-select" onchange="setCardFilter(this.value)" class="w-full appearance-none bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs sm:text-sm font-semibold rounded-xl pl-3.5 pr-8 py-2 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white cursor-pointer transition-all">
-              <option value="all">Todas las tarjetas (6)</option>
-              <option value="pending">Pendientes (5)</option>
-              <option value="paid">Pagadas (0)</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
-          </div>
-        </div>
-
-        <!-- Search Input -->
-        <div class="relative w-full sm:w-72">
+      <!-- Search bar -->
+      <div class="bg-white rounded-2xl p-3 sm:p-4 shadow-sm border border-slate-200/80">
+        <div class="relative w-full">
           <input type="text" id="search-input" oninput="renderCards()" placeholder="Buscar tarjeta o familiar..." class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition-all">
           <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
@@ -606,14 +585,6 @@
       
       const pct = calc.totalToCollect > 0 ? Math.min(100, (calc.totalCollected / calc.totalToCollect) * 100) : 0;
       document.getElementById('progress-cobrado').style.width = `${pct}%`;
-
-      // Actualizar select filter
-      const optAll = document.querySelector('#card-filter-select option[value="all"]');
-      const optPending = document.querySelector('#card-filter-select option[value="pending"]');
-      const optPaid = document.querySelector('#card-filter-select option[value="paid"]');
-      if (optAll) optAll.textContent = `Todas las tarjetas (${CARDS_DEF.length})`;
-      if (optPending) optPending.textContent = `Pendientes (${5 - calc.paidCount})`;
-      if (optPaid) optPaid.textContent = `Pagadas (${calc.paidCount + 1})`; // +1 por Ignacio
     }
 
     function renderCards(calc) {
@@ -756,15 +727,6 @@
       } else {
         renderCards();
       }
-    }
-
-    function setCardFilter(filter) {
-      activeCardFilter = filter;
-      const selectEl = document.getElementById('card-filter-select');
-      if (selectEl && selectEl.value !== filter) {
-        selectEl.value = filter;
-      }
-      renderCards();
     }
 
     function switchTab(tabId) {
