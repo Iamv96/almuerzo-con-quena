@@ -162,12 +162,11 @@
       </div>
 
       <!-- Quick Hint -->
-      <div class="flex items-center justify-between px-1">
+      <div class="px-1">
         <p class="text-xs text-slate-500 font-medium flex items-center gap-1.5">
           <svg class="w-4 h-4 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          <span>Toca cualquier tarjeta para ver a quiénes incluye o copiar su mensaje personalizado de WhatsApp.</span>
+          <span>Toca cualquier tarjeta para ver a quiénes incluye y el desglose de su cuota.</span>
         </p>
-        <button onclick="resetToDefaults()" class="text-[11px] text-slate-400 hover:text-slate-600 underline font-medium">Restablecer estados</button>
       </div>
 
       <!-- Cards Grid -->
@@ -491,7 +490,7 @@
         portions: 1,
         persons: ['Ignacio'],
         badgeColor: 'amber',
-        subtitle: 'Organizador (Pagó boleta $59.230)',
+        subtitle: 'Organizador (Pagó $59.230)',
         isOrganizer: true
       },
       {
@@ -520,6 +519,16 @@
       }
     ];
 
+    // Estado oficial de pagos gestionado únicamente por código
+    const PAID_STATUS = {
+      pamela: false,
+      alejandra: false,
+      mindy: false,
+      joaquin: false,
+      carla: false,
+      ignacio: true
+    };
+
     let paidStatus = {};
     let activeCardFilter = 'all';
     let expandedCards = {};
@@ -534,38 +543,9 @@
     };
 
     function init() {
-      const savedPaid = localStorage.getItem('almuerzo_quena_paid_status_v2');
-      if (savedPaid) {
-        try {
-          paidStatus = JSON.parse(savedPaid);
-        } catch (e) {
-          paidStatus = {};
-        }
-      }
-      
-      CARDS_DEF.forEach(c => {
-        if (typeof paidStatus[c.id] !== 'boolean') {
-          paidStatus[c.id] = !!c.isOrganizer;
-        }
-      });
-
+      // Estado de pagos gobernado únicamente por código
+      paidStatus = { ...PAID_STATUS };
       recalculateAndRenderAll();
-    }
-
-    function saveState() {
-      localStorage.setItem('almuerzo_quena_paid_status_v2', JSON.stringify(paidStatus));
-    }
-
-    function resetToDefaults() {
-      if (confirm('¿Deseas restablecer el registro de pagos a su estado inicial?')) {
-        paidStatus = {};
-        CARDS_DEF.forEach(c => {
-          paidStatus[c.id] = !!c.isOrganizer;
-        });
-        saveState();
-        recalculateAndRenderAll();
-        showToast('✓ Estado de pagos restablecido');
-      }
     }
 
     // -------------------------------------------------------------
@@ -663,23 +643,23 @@
         if (isIgnacio) {
           cardBgClass = 'bg-amber-50/50 border-amber-300 ring-1 ring-amber-200';
           statusBadge = `
-            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-amber-300 bg-amber-100 text-amber-900 text-xs font-bold shadow-xs">
-              💳 Pagó Boleta ($59.230)
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-amber-300 bg-amber-100 text-amber-900 text-xs font-bold shadow-xs whitespace-nowrap shrink-0">
+              💳 Pagó $59.230
             </span>
           `;
         } else if (isPaid) {
           cardBgClass = 'bg-emerald-50/40 border-emerald-300 ring-1 ring-emerald-200 hover:bg-emerald-50/70';
           statusBadge = `
-            <button type="button" onclick="event.stopPropagation(); togglePaidStatus('${c.id}', false)" title="Clic para marcar como pendiente" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-emerald-600 bg-emerald-600 text-white text-xs font-bold shadow-xs hover:scale-105 active:scale-95 transition-all">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-emerald-600 bg-emerald-600 text-white text-xs font-bold shadow-xs whitespace-nowrap shrink-0">
               ✓ Pagado
-            </button>
+            </span>
           `;
         } else {
           cardBgClass = 'bg-white border-slate-200 hover:shadow-md hover:border-slate-300';
           statusBadge = `
-            <button type="button" onclick="event.stopPropagation(); togglePaidStatus('${c.id}', true)" title="Clic para marcar como pagado" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-rose-300 bg-rose-50 text-rose-700 text-xs font-bold shadow-xs hover:scale-105 active:scale-95 transition-all">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-rose-300 bg-rose-50 text-rose-700 text-xs font-bold shadow-xs whitespace-nowrap shrink-0">
               ⏳ Pendiente
-            </button>
+            </span>
           `;
         }
 
@@ -692,8 +672,8 @@
           <div class="flex items-center justify-between gap-3">
             <div class="space-y-1 min-w-0 flex-1">
               <div class="flex items-center gap-2">
-                <h3 class="font-extrabold text-slate-900 text-base sm:text-lg leading-snug">${c.title}</h3>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                <h3 class="font-extrabold text-slate-900 text-base sm:text-lg leading-snug whitespace-nowrap">${c.title}</h3>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200 whitespace-nowrap shrink-0">
                   ${c.portions} ${c.portions === 1 ? 'porción' : 'porciones'}
                 </span>
               </div>
@@ -772,16 +752,6 @@
       } else {
         renderCards();
       }
-    }
-
-    function togglePaidStatus(cardId, status) {
-      paidStatus[cardId] = status;
-      saveState();
-      recalculateAndRenderAll();
-      const c = CARDS_DEF.find(x => x.id === cardId);
-      showToast(`${c?.title || cardId}: marcado como ${status ? '✓ Pagado' : '⏳ Pendiente'}`);
-    }
-
     function setCardFilter(filter) {
       activeCardFilter = filter;
       const selectEl = document.getElementById('card-filter-select');
