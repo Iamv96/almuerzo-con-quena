@@ -250,6 +250,12 @@ def update_excel(file_path):
             c_st = ws3.cell(row=r_idx, column=8, value="Organizador")
             c_st.fill = PatternFill(start_color="EFF6FF", end_color="EFF6FF", fill_type="solid")
             c_st.font = Font(name="Calibri", size=11, bold=True, color="1E3A8A")
+        elif nombre == "Alejandra":
+            c_sal = ws3.cell(row=r_idx, column=6, value=f"=D{r_idx}-E{r_idx}")
+            c_sal.font = Font(name="Calibri", size=11, bold=True, color="047857")
+            c_st = ws3.cell(row=r_idx, column=8, value="Pagado")
+            c_st.fill = PatternFill(start_color="D1FAE5", end_color="D1FAE5", fill_type="solid")
+            c_st.font = Font(name="Calibri", size=11, bold=True, color="065F46")
         else:
             c_sal = ws3.cell(row=r_idx, column=6, value=f"=D{r_idx}-E{r_idx}")
             c_sal.font = Font(name="Calibri", size=11, bold=True, color="047857")
