@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Almuerzo con Quena - División de Cuentas</title>
+  
+  <!-- Favicon / Emoji -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandWarm: '#ea580c',
+            brandDark: '#1e293b',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Font Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .table-container::-webkit-scrollbar {
+      height: 8px;
+    }
+    .table-container::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 6px;
+    }
+    .table-container::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 6px;
+    }
+    .table-container::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-orange-500 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="bg-gradient-to-r from-amber-600 via-orange-600 to-rose-700 text-white shadow-lg sticky top-0 z-50">
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left">
+        <div class="flex items-center space-x-3 text-left">
+          <div class="bg-white/15 p-2.5 rounded-2xl backdrop-blur-md border border-white/20 shadow-inner flex items-center justify-center text-2xl sm:text-3xl">
+            🍽️
+          </div>
+          <div class="text-left">
+            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Almuerzo con Quena</h1>
+          </div>
+        </div>
+        
+        <!-- Header Actions: Datos Bancarios + Ver Boleta -->
+        <div class="w-full sm:w-auto flex items-center gap-2">
+          <button onclick="openReceiptModal('comprobantes/boleta_jumbo_almuerzo.jpg', 'Boleta Electrónica Jumbo Quilpué ($59.230)', 'Cencosud Retail S.A. - Av. Ramón Freire 2414')" class="flex-1 sm:flex-initial px-4 py-2.5 bg-white/15 hover:bg-white/25 active:scale-95 transition-all text-white text-xs sm:text-sm font-bold rounded-xl border border-white/30 gap-2 backdrop-blur-md shadow-sm flex items-center justify-center">
+            <svg class="w-4 h-4 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span>Ver Boleta</span>
+          </button>
+          <button onclick="openBankModal()" class="flex-1 sm:flex-initial px-4 py-2.5 bg-white text-orange-700 hover:bg-orange-50 active:scale-95 transition-all text-xs sm:text-sm font-bold rounded-xl border border-white/40 gap-2 shadow-md flex items-center justify-center">
+            <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+            <span>Datos Bancarios</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16 flex-1 space-y-6">
+
+    <!-- KPI CARDS GRID -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <!-- Total Compra -->
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+        <p class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">Total Boleta</p>
+        <p class="text-xl sm:text-3xl font-extrabold text-slate-900 mt-1" id="kpi-total-gastado">$59.230</p>
+        <span class="text-[11px] text-slate-500 mt-1">10 productos (Jumbo Quilpué)</span>
+      </div>
+
+      <!-- Cuota por Porción -->
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+        <p class="text-[11px] font-bold tracking-wider text-slate-500 uppercase">Cuota por Porción</p>
+        <p class="text-xl sm:text-3xl font-extrabold text-orange-600 mt-1" id="kpi-cuota-porcion">$5.385</p>
+        <span class="text-[11px] text-slate-500 mt-1">Dividido en 11 porciones</span>
+      </div>
+
+      <!-- Estado Recaudación -->
+      <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-4 shadow-sm border border-emerald-200 flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <p class="text-[11px] font-bold tracking-wider text-emerald-800 uppercase">Recaudado</p>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800" id="badge-pagados">0/5</span>
+        </div>
+        <div class="flex items-baseline justify-between gap-2 mt-1">
+          <p class="text-xl sm:text-3xl font-extrabold text-emerald-800" id="kpi-total-cobrado">$0</p>
+        </div>
+        <div class="w-full bg-emerald-200 rounded-full h-2 overflow-hidden mt-2">
+          <div class="bg-emerald-600 h-2 rounded-full transition-all duration-500" id="progress-cobrado" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Saldo por recaudar -->
+      <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-4 shadow-sm border border-amber-200 flex flex-col justify-between">
+        <p class="text-[11px] font-bold tracking-wider text-amber-800 uppercase">Por Recaudar</p>
+        <p class="text-xl sm:text-3xl font-extrabold text-amber-900 mt-1" id="kpi-por-recaudar">$53.847</p>
+        <span class="text-[11px] text-amber-700 mt-1">A favor de Ignacio</span>
+      </div>
+    </div>
+
+    <!-- TABS NAVIGATION -->
+    <div class="bg-white rounded-2xl p-1.5 shadow-sm border border-slate-200/80 inline-flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto">
+      <button onclick="switchTab('tab-cards')" id="btn-tab-cards" class="tab-btn flex-1 py-2.5 px-4 sm:px-5 rounded-xl font-bold text-sm whitespace-nowrap transition-all flex items-center justify-center gap-2 bg-orange-600 text-white shadow-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <span>Tarjetas de Pago</span>
+      </button>
+
+      <button onclick="switchTab('tab-receipts')" id="btn-tab-receipts" class="tab-btn flex-1 py-2.5 px-4 sm:px-5 rounded-xl font-semibold text-sm whitespace-nowrap transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <span>Boleta & Desglose</span>
+      </button>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: TARJETAS DE PAGO -->
+    <!-- ========================================================================= -->
+    <section id="tab-cards" class="space-y-4">
+      
+      <!-- Filters and search bar -->
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <!-- Dropdown Filter -->
+        <div class="flex items-center gap-2.5">
+          <label for="card-filter-select" class="text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Filtrar:</label>
+          <div class="relative min-w-[180px]">
+            <select id="card-filter-select" onchange="setCardFilter(this.value)" class="w-full appearance-none bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs sm:text-sm font-semibold rounded-xl pl-3.5 pr-8 py-2 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white cursor-pointer transition-all">
+              <option value="all">Todas las tarjetas (6)</option>
+              <option value="pending">Pendientes (5)</option>
+              <option value="paid">Pagadas (0)</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Input -->
+        <div class="relative w-full sm:w-72">
+          <input type="text" id="search-input" oninput="renderCards()" placeholder="Buscar tarjeta o familiar..." class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition-all">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+      </div>
+
+      <!-- Quick Hint -->
+      <div class="flex items-center justify-between px-1">
+        <p class="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span>Toca cualquier tarjeta para ver a quiénes incluye o copiar su mensaje personalizado de WhatsApp.</span>
+        </p>
+        <button onclick="resetToDefaults()" class="text-[11px] text-slate-400 hover:text-slate-600 underline font-medium">Restablecer estados</button>
+      </div>
+
+      <!-- Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="cards-container">
+        <!-- Dynamically rendered individual cards -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: BOLETA Y DESGLOSE -->
+    <!-- ========================================================================= -->
+    <section id="tab-receipts" class="space-y-6 hidden">
+      
+      <!-- Top banner info -->
+      <div class="bg-gradient-to-r from-orange-50 via-amber-50 to-slate-50 border border-orange-200/80 rounded-2xl p-4 sm:p-5">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🧾</span>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Respaldo Oficial de la Compra</h2>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-600 mt-1">
+          Boleta electrónica N° 3492491858 de Jumbo Quilpué (Cencosud Retail S.A.) pagada con Tarjeta de Crédito por Ignacio Molina el 04/10/2026.
+        </p>
+      </div>
+
+      <!-- Card Boleta -->
+      <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 max-w-3xl mx-auto space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">
+              Boleta Electrónica N° 3492491858
+            </span>
+            <h3 class="text-lg font-extrabold text-slate-900 mt-1">Jumbo Quilpué (Cencosud)</h3>
+            <p class="text-xs text-slate-500">Av. Ramón Freire 2414, Quilpué • 04/10/2026 14:02</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-500 font-semibold uppercase block">Total Pagado</span>
+            <span class="text-3xl font-black text-slate-900">$59.230</span>
+            <span class="text-[11px] text-emerald-600 font-bold block">Ahorro Jumbo Ofertas: -$4.770</span>
+          </div>
+        </div>
+
+        <!-- Detalle de productos -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Productos Adquiridos en Boleta</h4>
+          <div class="divide-y divide-slate-100 text-sm">
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🍝</span>
+                <div>
+                  <p class="font-bold text-slate-800">Spaghetti 5 Lucchetti (4 un)</p>
+                  <p class="text-[11px] text-slate-400 font-mono">4 x $1.070 = $4.280 (Oferta Jumbo: -$1.280)</p>
+                </div>
+              </div>
+              <span class="font-bold text-slate-900">$3.000</span>
+            </div>
+
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🍅</span>
+                <div>
+                  <p class="font-bold text-slate-800">Salsa Tomate Mallo (6 un)</p>
+                  <p class="text-[11px] text-slate-400 font-mono">6 x $890 = $5.340 (Oferta Jumbo: -$1.360)</p>
+                </div>
+              </div>
+              <span class="font-bold text-slate-900">$3.980</span>
+            </div>
+
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🥩</span>
+                <div>
+                  <p class="font-bold text-slate-800">Carne Molida 7% (2 un)</p>
+                  <p class="text-[11px] text-slate-400 font-mono">2 x $6.990</p>
+                </div>
+              </div>
+              <span class="font-bold text-slate-900">$13.980</span>
+            </div>
+
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🧀</span>
+                <div>
+                  <p class="font-bold text-slate-800">Queso Colún Reggianito (2 un)</p>
+                  <p class="text-[11px] text-slate-400 font-mono">2 x $2.210 = $4.420 (Oferta Jumbo: -$640)</p>
+                </div>
+              </div>
+              <span class="font-bold text-slate-900">$3.780</span>
+            </div>
+
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🥤</span>
+                <div>
+                  <p class="font-bold text-slate-800">Bebida Coca-Cola Sin Azúcar 1.5L (2 un)</p>
+                  <p class="text-[11px] text-slate-400 font-mono">2 x $2.290 = $4.580 (Oferta Semana: -$1.490)</p>
+                </div>
+              </div>
+              <span class="font-bold text-slate-900">$3.090</span>
+            </div>
+
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🥤</span>
+                <div>
+                  <p class="font-bold text-slate-800">Bebida Sprite Zero</p>
+                  <p class="text-[11px] text-slate-400 font-mono">1 un</p>
+                </div>
+              </div>
+              <span class="font-bold text-slate-900">$2.590</span>
+            </div>
+
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🍄</span>
+                <div>
+                  <p class="font-bold text-slate-800">Champiñón Bandeja</p>
+                  <p class="text-[11px] text-slate-400 font-mono">1 un</p>
+                </div>
+              </div>
+              <span class="font-bold text-slate-900">$1.690</span>
+            </div>
+
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🥩</span>
+                <div>
+                  <p class="font-bold text-slate-800">Carne Molida 10%</p>
+                  <p class="text-[11px] text-slate-400 font-mono">1 un</p>
+                </div>
+              </div>
+              <span class="font-bold text-slate-900">$6.690</span>
+            </div>
+
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🎂</span>
+                <div>
+                  <p class="font-bold text-slate-800">Torta Merengue Lúcuma</p>
+                  <p class="text-[11px] text-slate-400 font-mono">1 un</p>
+                </div>
+              </div>
+              <span class="font-bold text-slate-900">$19.990</span>
+            </div>
+
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">🧻</span>
+                <div>
+                  <p class="font-bold text-slate-800">Servilleta Nova</p>
+                  <p class="text-[11px] text-slate-400 font-mono">1 un</p>
+                </div>
+              </div>
+              <span class="font-bold text-slate-900">$440</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Foto de la Boleta con Lightbox -->
+        <div class="space-y-2 pt-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700">Foto del comprobante físico:</span>
+            <button onclick="openReceiptModal('comprobantes/boleta_jumbo_almuerzo.jpg', 'Boleta Electrónica Jumbo Quilpué ($59.230)', 'Cencosud Retail S.A. - Av. Ramón Freire 2414')" class="text-xs font-bold text-orange-600 hover:text-orange-800 flex items-center gap-1">
+              <span>Ampliar imagen</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            </button>
+          </div>
+          <div class="relative group cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 hover:border-orange-400 transition-all" onclick="openReceiptModal('comprobantes/boleta_jumbo_almuerzo.jpg', 'Boleta Electrónica Jumbo Quilpué ($59.230)', 'Cencosud Retail S.A. - Av. Ramón Freire 2414')">
+            <img src="comprobantes/boleta_jumbo_almuerzo.jpg" alt="Boleta Electrónica Jumbo" class="w-full max-h-96 object-cover object-top group-hover:scale-102 transition-transform duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-3">
+              <span class="text-xs font-bold text-white bg-slate-900/80 px-3 py-1.5 rounded-xl backdrop-blur-sm flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                <span>Toca para ver boleta en grande</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODAL: DATOS BANCARIOS -->
+  <div id="bank-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target === this) closeBankModal()">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <span class="text-2xl">💳</span>
+          <div>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Datos para Transferencias</h3>
+            <p class="text-xs text-slate-500 font-medium">Cuenta oficial para transferir a Ignacio</p>
+          </div>
+        </div>
+        <button onclick="closeBankModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-sm font-bold transition-all">✕</button>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-2.5 text-xs sm:text-sm">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-200/60 pb-2">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Nombre</span>
+            <span class="font-bold text-slate-900 select-all">IGNACIO ALEJANDRO MOLINA VASQUEZ</span>
+          </div>
+          <button onclick="copySingleValue('IGNACIO ALEJANDRO MOLINA VASQUEZ', 'Nombre')" class="text-slate-400 hover:text-orange-600 p-1 rounded-lg hover:bg-white transition-all text-xs" title="Copiar nombre">📋</button>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 border-b border-slate-200/60 pb-2">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">RUT</span>
+            <span class="font-bold text-slate-900 select-all font-mono">19.265.355-K</span>
+          </div>
+          <button onclick="copySingleValue('19.265.355-K', 'RUT')" class="text-slate-400 hover:text-orange-600 p-1 rounded-lg hover:bg-white transition-all text-xs" title="Copiar RUT">📋</button>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 border-b border-slate-200/60 pb-2">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Banco</span>
+            <span class="font-bold text-slate-900 select-all">Bci / Banco Crédito e Inversiones</span>
+          </div>
+          <button onclick="copySingleValue('Bci / Banco Crédito e Inversiones', 'Banco')" class="text-slate-400 hover:text-orange-600 p-1 rounded-lg hover:bg-white transition-all text-xs" title="Copiar banco">📋</button>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 border-b border-slate-200/60 pb-2">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Tipo de Cuenta</span>
+            <span class="font-bold text-slate-900 select-all">Cuenta Corriente</span>
+          </div>
+          <button onclick="copySingleValue('Cuenta Corriente', 'Tipo de cuenta')" class="text-slate-400 hover:text-orange-600 p-1 rounded-lg hover:bg-white transition-all text-xs" title="Copiar tipo de cuenta">📋</button>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 border-b border-slate-200/60 pb-2">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Número de Cuenta</span>
+            <span class="font-black text-orange-700 select-all font-mono text-sm sm:text-base">777919265355</span>
+          </div>
+          <button onclick="copySingleValue('777919265355', 'N° de cuenta')" class="text-orange-600 hover:text-orange-800 p-1 rounded-lg hover:bg-white transition-all text-xs font-bold" title="Copiar número de cuenta">📋</button>
+        </div>
+
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Email para comprobante</span>
+            <span class="font-bold text-slate-900 select-all text-xs break-all">ignaciomolinavasquez@outlook.com</span>
+          </div>
+          <button onclick="copySingleValue('ignaciomolinavasquez@outlook.com', 'Email')" class="text-slate-400 hover:text-orange-600 p-1 rounded-lg hover:bg-white transition-all text-xs" title="Copiar email">📋</button>
+        </div>
+      </div>
+
+      <div class="space-y-2 pt-1">
+        <button onclick="copyAllBankDetails()" class="w-full py-3 px-4 bg-orange-600 hover:bg-orange-700 active:scale-98 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+          <span>Copiar todos los datos</span>
+        </button>
+        <button onclick="closeBankModal()" class="w-full py-2 text-center text-slate-400 hover:text-slate-600 font-semibold text-xs transition-colors">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VISOR DE COMPROBANTES (LIGHTBOX) -->
+  <div id="receipt-modal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5" onclick="if(event.target === this) closeReceiptModal()">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[94vh] flex flex-col p-4 sm:p-5 shadow-2xl border border-slate-100 space-y-3" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <span class="text-2xl">🧾</span>
+          <div>
+            <h3 id="receipt-modal-title" class="text-sm sm:text-base font-extrabold text-slate-900">Comprobante</h3>
+            <p id="receipt-modal-subtitle" class="text-xs text-slate-500 font-medium">Boleta oficial de la compra</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <a id="receipt-modal-link" href="#" target="_blank" class="px-2.5 py-1.5 text-xs font-bold text-orange-600 hover:text-orange-800 hover:bg-orange-50 rounded-xl transition-colors flex items-center gap-1 border border-orange-200/60">
+            <span>Abrir original ↗</span>
+          </a>
+          <button onclick="closeReceiptModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-sm font-bold transition-all">✕</button>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-auto rounded-2xl bg-slate-100 p-2 sm:p-3 flex items-center justify-center min-h-[280px]">
+        <img id="receipt-modal-img" src="" alt="Comprobante de compra" class="max-h-[75vh] w-auto max-w-full object-contain rounded-xl shadow-sm">
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-3 text-sm border border-slate-700 transition-all transform translate-y-2">
+    <span class="text-emerald-400 font-bold" id="toast-icon">✓</span>
+    <span id="toast-msg" class="font-medium">Mensaje copiado al portapapeles</span>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT LOGIC -->
+  <!-- ========================================================================= -->
+  <script>
+    const TOTAL_BOLETA = 59230;
+    const TOTAL_PORCIONES = 11;
+    const CUOTA_PORCION_EXACTA = TOTAL_BOLETA / TOTAL_PORCIONES; // 5384.545455
+    const CUOTA_PORCION_REDONDEADA = 5385;
+
+    // 6 Tarjetas con sus porciones y personas incluidas
+    const CARDS_DEF = [
+      {
+        id: 'pamela',
+        title: 'Pamela',
+        portions: 2,
+        persons: ['Pamela', 'Cote'],
+        badgeColor: 'blue',
+        subtitle: '2 porciones (Pamela y Cote)'
+      },
+      {
+        id: 'alejandra',
+        title: 'Alejandra',
+        portions: 1,
+        persons: ['Alejandra'],
+        badgeColor: 'blue',
+        subtitle: '1 porción individual'
+      },
+      {
+        id: 'ignacio',
+        title: 'Ignacio',
+        portions: 1,
+        persons: ['Ignacio'],
+        badgeColor: 'amber',
+        subtitle: 'Organizador (Pagó boleta $59.230)',
+        isOrganizer: true
+      },
+      {
+        id: 'mindy',
+        title: 'Mindy',
+        portions: 3,
+        persons: ['Mindy', 'Mauricio', 'Gustavo'],
+        badgeColor: 'orange',
+        subtitle: '3 porciones (Mindy, Mauricio y Gustavo)'
+      },
+      {
+        id: 'joaquin',
+        title: 'Joaquín',
+        portions: 2,
+        persons: ['Joaquín', 'Kheissa'],
+        badgeColor: 'indigo',
+        subtitle: '2 porciones (Joaquín y Kheissa)'
+      },
+      {
+        id: 'carla',
+        title: 'Carla',
+        portions: 2,
+        persons: ['Carla', 'Maxi y Martín (1 porción compartida)'],
+        badgeColor: 'purple',
+        subtitle: '2 porciones (Carla + Maxi y Martín)'
+      }
+    ];
+
+    let paidStatus = {};
+    let activeCardFilter = 'all';
+    let expandedCards = {};
+    
+    const bankData = {
+      name: 'IGNACIO ALEJANDRO MOLINA VASQUEZ',
+      rut: '19.265.355-K',
+      bank: 'Bci / Banco Crédito e Inversiones',
+      type: 'Cuenta Corriente',
+      account: '777919265355',
+      email: 'ignaciomolinavasquez@outlook.com'
+    };
+
+    function init() {
+      const savedPaid = localStorage.getItem('almuerzo_quena_paid_status_v2');
+      if (savedPaid) {
+        try {
+          paidStatus = JSON.parse(savedPaid);
+        } catch (e) {
+          paidStatus = {};
+        }
+      }
+      
+      CARDS_DEF.forEach(c => {
+        if (typeof paidStatus[c.id] !== 'boolean') {
+          paidStatus[c.id] = !!c.isOrganizer;
+        }
+      });
+
+      recalculateAndRenderAll();
+    }
+
+    function saveState() {
+      localStorage.setItem('almuerzo_quena_paid_status_v2', JSON.stringify(paidStatus));
+    }
+
+    function resetToDefaults() {
+      if (confirm('¿Deseas restablecer el registro de pagos a su estado inicial?')) {
+        paidStatus = {};
+        CARDS_DEF.forEach(c => {
+          paidStatus[c.id] = !!c.isOrganizer;
+        });
+        saveState();
+        recalculateAndRenderAll();
+        showToast('✓ Estado de pagos restablecido');
+      }
+    }
+
+    // -------------------------------------------------------------
+    // CALCULATIONS
+    // -------------------------------------------------------------
+    function calculate() {
+      let totalCollected = 0;
+      let paidCount = 0;
+      const totalToCollect = 53847; // Suma de las 6 tarjetas de terceros
+      const calculatedCards = {};
+
+      CARDS_DEF.forEach(c => {
+        const rawAmount = c.portions * CUOTA_PORCION_EXACTA;
+        const roundedAmount = Math.round(rawAmount);
+        const isPaid = !!paidStatus[c.id];
+
+        if (isPaid && !c.isOrganizer) {
+          totalCollected += roundedAmount;
+          paidCount++;
+        }
+
+        calculatedCards[c.id] = {
+          ...c,
+          rawAmount,
+          roundedAmount,
+          isPaid
+        };
+      });
+
+      const remainingToCollect = Math.max(0, totalToCollect - totalCollected);
+
+      return {
+        calculatedCards,
+        totalCollected,
+        paidCount,
+        totalToCollect,
+        remainingToCollect
+      };
+    }
+
+    const clp = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 });
+
+    function recalculateAndRenderAll() {
+      const calc = calculate();
+      renderKPIs(calc);
+      renderCards(calc);
+    }
+
+    function renderKPIs(calc) {
+      document.getElementById('kpi-total-cobrado').textContent = clp.format(calc.totalCollected);
+      document.getElementById('badge-pagados').textContent = `${calc.paidCount}/5`;
+      
+      const pct = calc.totalToCollect > 0 ? Math.min(100, (calc.totalCollected / calc.totalToCollect) * 100) : 0;
+      document.getElementById('progress-cobrado').style.width = `${pct}%`;
+
+      document.getElementById('kpi-por-recaudar').textContent = clp.format(calc.remainingToCollect);
+
+      // Actualizar select filter
+      const optAll = document.querySelector('#card-filter-select option[value="all"]');
+      const optPending = document.querySelector('#card-filter-select option[value="pending"]');
+      const optPaid = document.querySelector('#card-filter-select option[value="paid"]');
+      if (optAll) optAll.textContent = `Todas las tarjetas (${CARDS_DEF.length})`;
+      if (optPending) optPending.textContent = `Pendientes (${5 - calc.paidCount})`;
+      if (optPaid) optPaid.textContent = `Pagadas (${calc.paidCount + 1})`; // +1 por Ignacio
+    }
+
+    function renderCards(calc) {
+      if (!calc) calc = calculate();
+      const container = document.getElementById('cards-container');
+      container.innerHTML = '';
+
+      const query = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+
+      CARDS_DEF.forEach(c => {
+        const data = calc.calculatedCards[c.id];
+        const isPaid = data.isPaid;
+        const isIgnacio = !!c.isOrganizer;
+
+        // Filters
+        if (activeCardFilter === 'pending' && isPaid) return;
+        if (activeCardFilter === 'paid' && !isPaid) return;
+        
+        // Search filter matching title or included persons
+        if (query) {
+          const matchTitle = c.title.toLowerCase().includes(query);
+          const matchPerson = c.persons.some(p => p.toLowerCase().includes(query));
+          if (!matchTitle && !matchPerson) return;
+        }
+
+        const isExpanded = !!expandedCards[c.id];
+
+        let cardBgClass = '';
+        let statusBadge = '';
+
+        if (isIgnacio) {
+          cardBgClass = 'bg-amber-50/50 border-amber-300 ring-1 ring-amber-200';
+          statusBadge = `
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-amber-300 bg-amber-100 text-amber-900 text-xs font-bold shadow-xs">
+              💳 Pagó Boleta ($59.230)
+            </span>
+          `;
+        } else if (isPaid) {
+          cardBgClass = 'bg-emerald-50/40 border-emerald-300 ring-1 ring-emerald-200 hover:bg-emerald-50/70';
+          statusBadge = `
+            <button type="button" onclick="event.stopPropagation(); togglePaidStatus('${c.id}', false)" title="Clic para marcar como pendiente" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-emerald-600 bg-emerald-600 text-white text-xs font-bold shadow-xs hover:scale-105 active:scale-95 transition-all">
+              ✓ Pagado
+            </button>
+          `;
+        } else {
+          cardBgClass = 'bg-white border-slate-200 hover:shadow-md hover:border-slate-300';
+          statusBadge = `
+            <button type="button" onclick="event.stopPropagation(); togglePaidStatus('${c.id}', true)" title="Clic para marcar como pagado" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border border-rose-300 bg-rose-50 text-rose-700 text-xs font-bold shadow-xs hover:scale-105 active:scale-95 transition-all">
+              ⏳ Pendiente
+            </button>
+          `;
+        }
+
+        const card = document.createElement('div');
+        card.className = `rounded-2xl p-4 sm:p-5 shadow-sm border transition-all duration-200 cursor-pointer select-none ${cardBgClass}`;
+        card.onclick = () => toggleCardExpand(c.id);
+
+        card.innerHTML = `
+          <!-- Header / Minimized Summary -->
+          <div class="flex items-center justify-between gap-3">
+            <div class="space-y-1 min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <h3 class="font-extrabold text-slate-900 text-base sm:text-lg leading-snug">${c.title}</h3>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                  ${c.portions} ${c.portions === 1 ? 'porción' : 'porciones'}
+                </span>
+              </div>
+              <div class="text-xs text-slate-500 font-medium">
+                ${isIgnacio ? 
+                  `Monto a recaudar: <strong class="text-emerald-700 font-black text-sm sm:text-base">${clp.format(calc.remainingToCollect)}</strong>` : 
+                  `Monto a transferir: <strong class="text-slate-900 font-black text-sm sm:text-base">${clp.format(data.roundedAmount)}</strong>`
+                }
+              </div>
+            </div>
+
+            <!-- Status Badge & Expand Chevron -->
+            <div class="flex items-center gap-2 flex-shrink-0">
+              ${statusBadge}
+              <div id="card-chevron-${c.id}" class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 transition-transform duration-200 ${isExpanded ? 'rotate-180 bg-orange-50 text-orange-600' : ''}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subtitle / Included members -->
+          <p class="text-xs text-slate-500 mt-1 font-medium">${c.subtitle}</p>
+
+          <!-- Collapsible Desglose -->
+          <div id="card-details-${c.id}" class="${isExpanded ? '' : 'hidden'} pt-4 border-t border-slate-200/80 mt-4 space-y-3 cursor-default" onclick="event.stopPropagation()">
+            
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 space-y-2">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">PERSONAS Y PORCIONES INCLUIDAS</span>
+              <div class="space-y-1 text-xs">
+                ${c.persons.map(p => `
+                  <div class="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-lg border border-slate-200/60 font-medium text-slate-800">
+                    <span>👤 ${p}</span>
+                    <strong class="font-bold text-orange-700">$5.385</strong>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="flex justify-between items-center pt-1 border-t border-slate-200 text-xs font-bold text-slate-900">
+                <span>Total tarjeta (${c.portions} ${c.portions === 1 ? 'porción' : 'porciones'}):</span>
+                <span class="text-sm font-black text-slate-900">${clp.format(data.roundedAmount)}</span>
+              </div>
+            </div>
+
+            ${isIgnacio ? `
+              <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-900">
+                Ignacio pagó la totalidad de la boleta ($59.230) con Tarjeta de Crédito. Le corresponde recaudar $53.846 en total de las 5 tarjetas restantes.
+              </div>
+            ` : ''}
+
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      if (container.children.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400">
+            <p class="text-base font-semibold">No se encontraron tarjetas con el filtro aplicado.</p>
+          </div>
+        `;
+      }
+    }
+
+    function toggleCardExpand(cardId) {
+      expandedCards[cardId] = !expandedCards[cardId];
+      const detailsEl = document.getElementById(`card-details-${cardId}`);
+      const chevronEl = document.getElementById(`card-chevron-${cardId}`);
+      if (detailsEl && chevronEl) {
+        if (expandedCards[cardId]) {
+          detailsEl.classList.remove('hidden');
+          chevronEl.classList.add('rotate-180', 'bg-orange-50', 'text-orange-600');
+        } else {
+          detailsEl.classList.add('hidden');
+          chevronEl.classList.remove('rotate-180', 'bg-orange-50', 'text-orange-600');
+        }
+      } else {
+        renderCards();
+      }
+    }
+
+    function togglePaidStatus(cardId, status) {
+      paidStatus[cardId] = status;
+      saveState();
+      recalculateAndRenderAll();
+      const c = CARDS_DEF.find(x => x.id === cardId);
+      showToast(`${c?.title || cardId}: marcado como ${status ? '✓ Pagado' : '⏳ Pendiente'}`);
+    }
+
+    function setCardFilter(filter) {
+      activeCardFilter = filter;
+      const selectEl = document.getElementById('card-filter-select');
+      if (selectEl && selectEl.value !== filter) {
+        selectEl.value = filter;
+      }
+      renderCards();
+    }
+
+    function switchTab(tabId) {
+      ['tab-cards', 'tab-receipts'].forEach(t => {
+        const el = document.getElementById(t);
+        if (el) el.classList.add('hidden');
+      });
+      const activeEl = document.getElementById(tabId);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = 'tab-btn flex-1 py-2.5 px-4 sm:px-5 rounded-xl font-semibold text-sm whitespace-nowrap transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100';
+      });
+      const activeBtn = document.getElementById(`btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = 'tab-btn flex-1 py-2.5 px-4 sm:px-5 rounded-xl font-bold text-sm whitespace-nowrap transition-all flex items-center justify-center gap-2 bg-orange-600 text-white shadow-sm';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // WHATSAPP GENERATION & COPY
+    // -------------------------------------------------------------
+    function buildBankText() {
+      return `\n🏦 *Datos para transferir a Ignacio:*\n• *Nombre:* ${bankData.name}\n• *RUT:* ${bankData.rut}\n• *Banco:* ${bankData.bank}\n• *Tipo de cuenta:* ${bankData.type}\n• *N° Cuenta:* ${bankData.account}\n• *Email:* ${bankData.email}`;
+    }
+
+    function generateMemberMessage(cardId, calc) {
+      if (!calc) calc = calculate();
+      const c = calc.calculatedCards[cardId];
+
+      let msg = `🍽️ *ALMUERZO CON QUENA* 🍽️\n\n`;
+      msg += `Hola ${c.title}! 👋 Te comparto el detalle de la cuota del almuerzo familiar:\n\n`;
+      msg += `👥 *Personas y porciones incluidas (${c.portions} ${c.portions === 1 ? 'porción' : 'porciones'}):*\n`;
+      c.persons.forEach(p => {
+        msg += `• 👤 ${p} ($5.385)\n`;
+      });
+      msg += `\n💰 *TOTAL A TRANSFERIR A IGNACIO: ${clp.format(c.roundedAmount)}*\n`;
+      msg += buildBankText();
+      msg += `\n\n¡Muchas gracias! 🍽️✨`;
+      return msg;
+    }
+
+    function copyMemberWhatsAppMessage(cardId) {
+      const msg = generateMemberMessage(cardId);
+      navigator.clipboard.writeText(msg).then(() => {
+        const c = CARDS_DEF.find(x => x.id === cardId);
+        showToast(`✓ Mensaje para ${c?.title || cardId} copiado`);
+      });
+    }
+
+    function openWhatsAppWeb(cardId) {
+      const msg = generateMemberMessage(cardId);
+      const url = `https://web.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    function copyGroupWhatsAppSummary() {
+      const calc = calculate();
+      let msg = `🍽️ *RESUMEN DE CUOTAS - ALMUERZO CON QUENA* 🍽️\n\n`;
+      msg += `Hola familia! Ya tenemos la división de la boleta de la compra para el almuerzo ($59.230 en Jumbo Quilpué divididos en 11 porciones de $5.385):\n\n`;
+      msg += `👥 *Cuotas por tarjeta / grupo familiar:*\n`;
+
+      CARDS_DEF.forEach(c => {
+        if (c.isOrganizer) {
+          msg += `• *Ignacio:* Pagó con tarjeta $59.230 (Organizador)\n`;
+        } else {
+          const data = calc.calculatedCards[c.id];
+          const isP = data.isPaid;
+          const statusIcon = isP ? '✅ (Pagado)' : '⏳ (Pendiente)';
+          msg += `• *${c.title}:* ${clp.format(data.roundedAmount)} (${c.portions} ${c.portions === 1 ? 'porción' : 'porciones'}) ${statusIcon}\n`;
+          if (c.persons.length > 1) {
+            msg += `   └ Incluye: ${c.persons.join(', ')}\n`;
+          }
+        }
+      });
+
+      msg += buildBankText();
+      msg += `\n\n¡Por favor avisar al transferir para ir marcando la lista! Muchas gracias a todos! 🍽️🎉`;
+
+      navigator.clipboard.writeText(msg).then(() => {
+        showToast('✓ Resumen grupal copiado al portapapeles');
+      });
+    }
+
+    // -------------------------------------------------------------
+    // BANK MODAL
+    // -------------------------------------------------------------
+    function openBankModal() {
+      document.getElementById('bank-modal').classList.remove('hidden');
+    }
+
+    function closeBankModal() {
+      document.getElementById('bank-modal').classList.add('hidden');
+    }
+
+    function copySingleValue(text, label) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`✓ ${label} copiado`);
+      });
+    }
+
+    function copyAllBankDetails() {
+      const text = `DATOS PARA TRANSFERIR A IGNACIO:\nNombre: ${bankData.name}\nRUT: ${bankData.rut}\nBanco: ${bankData.bank}\nTipo: ${bankData.type}\nN° Cuenta: ${bankData.account}\nEmail: ${bankData.email}`;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('✓ Todos los datos copiados');
+      });
+    }
+
+    // -------------------------------------------------------------
+    // RECEIPT MODAL
+    // -------------------------------------------------------------
+    function openReceiptModal(imgSrc, title, subtitle) {
+      document.getElementById('receipt-modal-img').src = imgSrc;
+      document.getElementById('receipt-modal-title').textContent = title || 'Comprobante';
+      document.getElementById('receipt-modal-subtitle').textContent = subtitle || 'Respaldo oficial';
+      document.getElementById('receipt-modal-link').href = imgSrc;
+      document.getElementById('receipt-modal').classList.remove('hidden');
+    }
+
+    function closeReceiptModal() {
+      document.getElementById('receipt-modal').classList.add('hidden');
+    }
+
+    // -------------------------------------------------------------
+    // TOAST NOTIFICATION
+    // -------------------------------------------------------------
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.textContent = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    // Start on DOM ready
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
